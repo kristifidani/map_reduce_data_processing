@@ -1,133 +1,158 @@
-# Project Overview
-In this project I have used MapReduce in order to solve several tasks including: counting, reverse web-graph link, KNN algorithm and matrix multiplication.  
-Each of the tasks has its own dataset and requirements, as explained in the project description file.  
-MapReduce is a programming model and implementation which, allows us to process and generate large amounts of data, by splitting them in smaller chunks and performing parallel operations on a cluster e.g., Hadoop.  
-All the code is written in Python, by using MRJob framework, which allows us to program with MapReduce.
-- Mapper: Takes an input and processes a logical key-value pair to generate a set of intermediate key-values.
-- Combiner: Serves as a local reducer for each map.
-- Reducer: Merges all intermediate values, associated with the same intermediate key and outputs the result.
+# MapReduce Solutions for Diverse Data Tasks
 
-The code for the mapper and reducer functions can be written in one single class. We can specify multiple steps that consist of at least one of the functions.
+### Project Overview
+
+In this project, I've harnessed the power of MapReduce to tackle a variety of tasks, encompassing **counting**, **reverse web-graph** link analysis, **K-Nearest Neighbors** (KNN) algorithm, and **matrix multiplication**. Each task is associated with its unique dataset and specific requirements, all meticulously detailed in the project description.
+
+Utilizing the MapReduce programming paradigm, I've efficiently processed substantial volumes of data by breaking them down into manageable chunks and orchestrating parallel operations on a cluster, exemplified by technologies such as Hadoop. My implementation leverages the MRJob framework, a powerful tool that empowers seamless programming with the MapReduce model in Python.
+
+**Key Aspects:**
+
+- **Mapper**: Transforms input data into logical key-value pairs, generating a collection of intermediate key-values.
+- **Combiner**: Acts as a localized reducer for each map operation, optimizing intermediate data processing.
+- **Reducer**: Aggregates intermediate values linked with the same key, culminating in the desired outcome.
+
+This project's beauty lies in the integration of mapper and reducer functions within a unified class, offering a streamlined and coherent approach. The flexibility to define multiple steps, each composed of at least one function, facilitates a comprehensive data processing pipeline that can be tailored to the intricacies of the tasks at hand.
+
 
 ### Task 1
-1. Dataset
 
-   For this task I have been working on the Movie Lens dataset. The dataset file name in the project folder is movies.csv. It consists of over sixty thousand rows and three columns: movieId, title and genres.
-2. Task description
+1. **Dataset**
 
-   As specified in the project description, the goal in this task is to find the top 10 most common keywords in the titles, for each unique genre. Additionally, title words should be filtered to avoid numbers (years), auxiliary verbs, conjunctions, prepositions, and articles as keywords. The output should be each genre and its associated list of the top 10 most used keywords and their counter.
-3. Dependencies
+   I worked with the Movie Lens dataset (`movies.csv`), comprising 60,000+ rows and columns `movieId`, `title`, and `genres`.
 
-   - MRJob and MRStep – Python library for writing MapReduce.
-   - RE – Regular Expression Operations.
-   - NLTK – Library for human language data processing.
-   - SimpleJSON – JSON serializer.
-4. Run project command
+1. **Task Description**
 
-   - Python main.py movies.csv
-5. Solution
+   Goal: Find top 10 common title keywords for each genre. Filter out numbers, auxiliary verbs, etc. Output: Genre with its top keywords and counters.
 
-   I have created a python class MovieLens that imports MRJob library as a parameter. Inside this class are written all the map and reduce functions needed for this task.
-   1. First step:
-      - Mapper
-        takes as a parameter key: None, and value: each line of the input file. In this case movies.csv.
-        Since the data in the dataset has not a fixed format, I have accessed each data of the row according to their columns, by splitting the line. Most of the data have a comma separation between them, so I have split the line with comma. Some other data have nested quotations or other special characters. Therefore, I checked the length of line with split by comma and if it is not three (each column), I split the line by quotes. In this way I have access equally to all the data in the dataset, regardless of their format and I unpacked each line according to the columns: movieId, title, genres.
-        Afterwards, I filtered the genres with a regular expression that matches only letters, spaces, and lines. Additionally, I needed to also filter the titles. I made another regular expression that matches only letters and I used NLTK library stop words as suggested in the project task description. It ignores all the common words in English such as: “the”, “a”, “in” etc. I also used the function isalnum, which removes the
-special characters. Furthermore, I filtered only the title words that have a length of higher than two, so that I could pick up more significant keywords.
-This mapper yields a list of genres and title words as key, and a count of 1 for each as value. The format is: [genre, title], 1.
-    2. Second step:
+1. **Dependencies**
 
-       - Reducer takes as a parameter key: all the unique genres obtained from the first step and as value [word, sum]. This reducer unpacks the values and sorts dhe list.
-Since the value is of type generator, I have used simplejson, in order to serialize it as JSON and perform the sorting in descending order, according to the count. I have outputted only the top 10 most common title keywords in descending order for each genre.
-Reducer Final Output
+   - `MRJob` and `MRStep`: Python libraries for MapReduce.
+   - `re` (Regular Expression): Text pattern matching.
+   - `NLTK` (Natural Language Toolkit): Human language data processing.
+   - `SimpleJSON`: JSON serialization.
+
+1. **Solution**
+
+   I implemented a Python class `MovieLens` with map and reduce functions.
+
+   1. **Step 1: Mapper**
+
+      Process lines from `movies.csv`. Data formats vary, so I accessed `movieId`, `title`, and `genres` through effective splitting, handling commas and quotes. Genres and titles are filtered using regex and NLTK stop words. Emits: `[genre, title]`, 1.
+
+   1. **Step 2: Reducer**
+
+      Takes unique genres from Step 1 as keys, `[word, sum]` as values. Unpacks, sorts, and outputs top 10 keywords with JSON serialization.
+
+   This MapReduce workflow effectively extracts insights from complex data structures.
 
 ### Task 2
-1. Dataset
 
-   For this task I have worked with the Google Web Graph dataset. In the project folder it has the name web-Google.txt. This dataset consists of a very large number of rows that have unordered node pairs: FromNodeId – ToNodeId. In total there are 875713 Nodes and 5105039 Edges. Nodes represent web pages and edges represent hyperlinks between them.
-2. Task description
+1. **Dataset**
 
-   As specified in the project description, the goal is to reverse the web-link graph from the given dataset. The output should be each node and its corresponding list of other nodes linking to them.
-3. Dependencies
-   - MRJob and MRStep – Python library for writing MapReduce.
-4. Run project command
-   - Python main.py web-Google.txt
-5. Solution
+   Utilized Google Web Graph dataset (`web-Google.txt`) containing 875,713 Nodes and 5,105,039 Edges representing web pages and hyperlinks.
 
-   I have created a python class ReverseGraph that imports MRJob library as a parameter. Inside this class are written all the map, reduce functions needed for this task. It has only one step.
-   1. Mapper takes as a parameter key: None, and value: each line of the input file. In this case web-Google.txt.
-The data format is really simple. There are only two columns divided by empty spaces. Therefore, I split each line by the empty spaces and skipped the first couple of lines that describe the dataset. I got a good understanding of the functions input and output by looking at the hand notes that professor Deligiannis has posted on canvas.
-This mapper yields in reverse order: toNode as key and fromNode as value.
-   2. Reducer takes as parameter key: toNode and as a value: fromNode generated from the mapper.
-Yields toNode as a key and its corresponding list of all nodes linking to it as value. Yield: toNode, list(fromNode). In simpler terms, all the nodes in the list are links to the node in the key.
+1. **Task Description**
+
+   Objective: Reverse the web-link graph. Output each node along with its linked nodes.
+
+1. **Dependencies**
+
+   - `MRJob` and `MRStep`: Python libraries for MapReduce.
+
+1. **Solution**
+
+   I designed a Python class `ReverseGraph` with map and reduce functions for this one-step task.
+
+   - **Mapper**
+
+     Process each line from `web-Google.txt`. The data format is simple with two columns divided by spaces. After splitting, I ignored initial dataset description lines. The mapper emits reversed key-value pairs: `toNode` as key and `fromNode` as value.
+
+   - **Reducer**
+
+     Process mapper output. For each `toNode`, collect its associated `fromNode` values as a list. The final output presents each `toNode` followed by a list of linked nodes.
+
+This streamlined MapReduce approach effectively reverses the web-link graph.
 
 ### Task 3
-1. Dataset
 
-   For this task I have worked with the Iris dataset, which in the project folder has the name Iris.csv. This dataset consists of four features that were measured for three Iris species. In total there are 150 rows and 6 columns: Id, SepalLengthCm, SepalWidthCm, PetalLengthCm, PetalWidthCm and Species classification.
-2. Task description
+1. **Dataset**
 
-   There are some Iris in the dataset that are not classified. As specified in the project description, the goal is to classify those unknown species based on the four features, by implementing the k-nearest neighbours (KNN) algorithm with K=15. To measure the distance in KNN we will use the Euclidian distance.
-The output should be the Id of the unknown species associated by our result classification.
-3. Dependencies
-   - MRJob and MRStep – Python library for writing MapReduce.
-   - Math (sqrt) – built in function to calculate the mathematical operations.
-   - Sklearn (preprocessing) – Library for normalizing dhe dataset.
-   - Pandas – Popular library for reading .csv file.
-4. Run project command
-   - Python main.py Iris.csv
-5. Solution
+   Used the Iris dataset (`Iris.csv`) with 150 rows and 6 columns, including features like `SepalLengthCm` and species classification.
 
-   I have created a python class KNN that imports MRJob library as a parameter. Inside this class are written all the map and reduce functions needed for this task.
-   1. Constructor
+1. **Task Description**
 
-      As a starter, I have created a class constructor in order to read the csv file with pandas and store them in constructor variables. This way I can access the data anywhere in the code. Pandas returns a data frame that makes it easier to access the data, either by rows or columns. With Pandas you need to specify the absolute file path in order to access it. Therefore, you need to put your own device’s absolute file path in order to work. Since, I don’t need to normalize all the columns, I selected only the feature columns and passed them to sklearn pre-processing MinMaxScaler function, to normalise the dataset. All the data now are scalable from 0 to 1, where 0 is the minimum value and 1 is the maximum value.
-      Finally, I have split the data into training and testing set. Testing data consists of the Iris species that are not classified, while training data consists of the Iris species that are already classified.
+   Objective: Classify unknown Iris species using k-nearest neighbors (KNN) algorithm (K=15). Measure distances with Euclidean distance. Output: Id of unknown species and its predicted classification.
 
-    2. First step:
-       1. Mapper takes as parameter key: None and as parameter value: line but in this case I have not used it, since I read the dataset with Panda’s library.
-         This mapper calculates the Euclidian distance by iterating over the test and train data.
-         Returns (test data id, train data id, train data species) as key and Euclidian distance as value.
+1. **Dependencies**
 
-        2. Reducer takes as parameter keys and values coming from the mapper. It removes data repetitions and returns them in a different format.
-         Yield: test data id as key, (train data id, train data species, Euclidian distance) as value.
+   - `MRJob` and `MRStep`: Python libraries for MapReduce.
+   - `Math.sqrt`: Built-in function for math operations.
+   - `Sklearn.preprocessing`: Library for dataset normalization.
+   - `Pandas`: Popular library for CSV reading.
 
-     3. Second step:
+1. **Solution**
 
-        Reducer takes as parameter key and value coming from the first step. It sorts the data according to the distance in ascending order and gets top 15 neighbours, since it was specified in the task that K=15.
-        Yield: test data id as key and (train data id, train data species, Euclidian distance) as value.
+   I implemented a Python class `KNN` with map and reduce functions.
 
-     5. Third step:
+   - **Constructor**
 
-        Reducer takes as parameter key and value coming from the second step. It classifies the unknown species by finding the mode of the neighbours list.
-        I have iterated over the list of neighbours, and I have counted which of the species type is repeated the most. Therefore, the feature with the highest count number will be the classification for the unknown data. Yield: test data id, classification.
+      Read CSV file using Pandas, store data for access, normalize feature columns with `MinMaxScaler`. Split data into training and testing sets.
 
+   - **Step 1: Mapper**
+
+      Calculate Euclidean distance between test and train data. Emit `(test_id, train_id, train_species)` as key and distance as value.
+
+   - **Step 1: Reducer**
+
+      Remove data repetitions and emit `(test_id, train_id, train_species, distance)`.
+
+   - **Step 2: Reducer**
+
+      Sort data by distance, get top 15 neighbors. Emit `(test_id, train_id, train_species, distance)`.
+
+   - **Step 3: Reducer**
+
+      Classify unknown species by finding mode of neighbors' species. Emit `test_id, classification`.
+
+This MapReduce approach efficiently classifies unknown Iris species.
 
 ### Task 4
-1. Dataset
 
-   For this task I have worked with a matrix dataset, which in the project folder has the name A.txt. This dataset consists of 1000 rows and 50 columns.
-2. Task description
+1. **Dataset**
 
-   As specified in the project description, the goal of this task is te calculate the Frobenius norm of the matrix with the given formula:
-   We are required to calculate the sum of the squares of the elements on the same row in one reducer and calculate the Frobenius norm in another reducer.
-3. Dependencies  
-    - MRJob and MRStep – Python library for writing MapReduce.
-    - Math – built in function to perform mathematical operations.
-4. Run project command
+   Used matrix dataset `A.txt` with 1000 rows and 50 columns.
 
-    - Python main.py A.txt
-5. Solution
+1. **Task Description**
 
-I have created a python class, FrobeniusNorm that imports MRJob library as a parameter. Inside this class are written all the map and reduce functions needed for this task.  
-  1. First step:
-     - Mapper - takes as parameter key: None and as parameter value: each line of the dataset.
-       Each of the data is separated by an empty space. Therefore, I have split the line into empty spaces in order to access each element.
-       Yield: row items, None.
-     - Reducer takes as parameters key: row items coming from the mapper and as value: none. Sums the absolute value of all elements in a row, in power of 2.
-       Yield: None, row sum
+   Calculate the Frobenius norm of the matrix using a MapReduce approach. The norm is calculated by summing the squares of elements in the same row in one reducer and computing the Frobenius norm in another reducer.
 
-   2. Second step:
+1. **Dependencies**
 
-      Reducer – takes as parameter key: none and as a value: sum of the absolute values of all elements in a row, in power of 2.  
-      Returns: ‘Forbenius Norm is: ‘, Frobenius Norm.
+   - `MRJob` and `MRStep`: Python libraries for MapReduce.
+   - `Math`: Built-in function for mathematical operations.
+
+1. **Solution**
+
+   Implemented a Python class `FrobeniusNorm` with map and reduce functions.
+
+   - **Step 1: Mapper**
+
+      Split each line into elements using empty spaces. Emit row items as key, None as value.
+
+   - **Step 1: Reducer**
+
+      Calculate the sum of absolute values of elements in a row, raised to power 2. Emit None as key and row sum.
+
+   - **Step 2: Reducer**
+
+      Calculate the square root of the sum of squared row sums (Frobenius norm). Emit Frobenius norm.
+
+   This MapReduce approach efficiently computes the Frobenius norm of the matrix.
+
+### Conclusion
+
+Utilizing the MapReduce paradigm, this project showcases the power of parallel processing for solving a range of tasks, from keyword extraction to graph analysis and classification. The provided solutions leverage the MRJob framework and Python libraries to efficiently process large datasets, demonstrating the capabilities of MapReduce in a diverse set of applications.
+
+Feel free to explore the code and adapt the provided solutions to your specific needs.
+
