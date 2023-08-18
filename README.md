@@ -2,9 +2,16 @@
 
 ### Project Overview
 
-In this project, I've harnessed the power of MapReduce to tackle a variety of tasks, encompassing **counting**, **reverse web-graph** link analysis, **K-Nearest Neighbors** (KNN) algorithm, and **matrix multiplication**. Each task is associated with its unique dataset and specific requirements, all meticulously detailed in the project description.
+In this project, I've harnessed the power of MapReduce to tackle a variety of tasks:  
 
-Utilizing the MapReduce programming paradigm, I've efficiently processed substantial volumes of data by breaking them down into manageable chunks and orchestrating parallel operations on a cluster, exemplified by technologies such as Hadoop. My implementation leverages the MRJob framework, a powerful tool that empowers seamless programming with the MapReduce model in Python.
+1. **Encompass counting**
+2. **Reverse web-graph link analysis**
+3. **K-Nearest Neighbors (KNN) algorithm**
+4.  **Matrix multiplication**.
+
+Each task is associated with its unique dataset and specific requirements, all meticulously detailed in the project description.
+
+Utilizing the MapReduce programming paradigm, I've efficiently processed substantial volumes of data by breaking them into manageable chunks and orchestrating parallel operations on a cluster, exemplified by technologies such as Hadoop. My implementation leverages the MRJob framework, a powerful tool that empowers seamless programming with the MapReduce model in Python.
 
 **Key Aspects:**
 
@@ -12,8 +19,7 @@ Utilizing the MapReduce programming paradigm, I've efficiently processed substan
 - **Combiner**: Acts as a localized reducer for each map operation, optimizing intermediate data processing.
 - **Reducer**: Aggregates intermediate values linked with the same key, culminating in the desired outcome.
 
-This project's beauty lies in the integration of mapper and reducer functions within a unified class, offering a streamlined and coherent approach. The flexibility to define multiple steps, each composed of at least one function, facilitates a comprehensive data processing pipeline that can be tailored to the intricacies of the tasks at hand.
-
+This project integrates mapper and reducer functions within a unified class, offering a streamlined and coherent approach. The flexibility to define multiple steps, each composed of at least one function, facilitates a comprehensive data processing pipeline that can be tailored to the intricacies of the tasks at hand.
 
 ### Task 1
 
@@ -23,7 +29,8 @@ This project's beauty lies in the integration of mapper and reducer functions wi
 
 1. **Task Description**
 
-   Goal: Find top 10 common title keywords for each genre. Filter out numbers, auxiliary verbs, etc. Output: Genre with its top keywords and counters.
+   - Goal: Find top 10 common title keywords for each genre. Filter out numbers, auxiliary verbs, etc.
+   - Output: Genre with its top keywords and counters.
 
 1. **Dependencies**
 
@@ -54,7 +61,8 @@ This project's beauty lies in the integration of mapper and reducer functions wi
 
 1. **Task Description**
 
-   Objective: Reverse the web-link graph. Output each node along with its linked nodes.
+   - Goal: Reverse the web-link graph.
+   - Output each node along with its linked nodes.
 
 1. **Dependencies**
 
@@ -82,7 +90,8 @@ This streamlined MapReduce approach effectively reverses the web-link graph.
 
 1. **Task Description**
 
-   Objective: Classify unknown Iris species using k-nearest neighbors (KNN) algorithm (K=15). Measure distances with Euclidean distance. Output: Id of unknown species and its predicted classification.
+   - Goal: Classify unknown Iris species using the k-nearest neighbors (KNN) algorithm (K=15).
+   - Measure distances with Euclidean distance. Output: Id of unknown species and its predicted classification.
 
 1. **Dependencies**
 
@@ -97,7 +106,7 @@ This streamlined MapReduce approach effectively reverses the web-link graph.
 
    - **Constructor**
 
-      Read CSV file using Pandas, store data for access, normalize feature columns with `MinMaxScaler`. Split data into training and testing sets.
+      Read CSV file using Pandas, store data for access, and normalize feature columns with `MinMaxScaler`. Split data into training and testing sets.
 
    - **Step 1: Mapper**
 
@@ -125,7 +134,8 @@ This MapReduce approach efficiently classifies unknown Iris species.
 
 1. **Task Description**
 
-   Calculate the Frobenius norm of the matrix using a MapReduce approach. The norm is calculated by summing the squares of elements in the same row in one reducer and computing the Frobenius norm in another reducer.
+   - Goal: Calculate the Frobenius norm of the matrix using a MapReduce approach. The norm is calculated by summing the squares of elements in the same row in one reducer and computing the Frobenius norm in another reducer.
+   - Output Frobenius norm
 
 1. **Dependencies**
 
